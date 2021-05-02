@@ -19,20 +19,28 @@ def walkFinder(edgesList):
     BFSarray = []
 
     for edge in edgesList:
-        BFSarray.append((edge, [edge]))
+        BFSarray.append((edge, [edge], set([edge]))) #change [edge] to set(edge) - gets error BFSarray.append((edge, set(edge)) TypeError: 'Edge' object is not iterable
+    
+    #for index, tuple in enumerate(BFSarray):
+    #    element_one = tuple[0]
+    #    element_two = tuple[1]
+    #    element_three = tuple[2]
+    #    print(str(element_one), str(element_two[0]), element_one in element_three)
 
     while len(BFSarray) != 0:
-        (edge,visited) = BFSarray.pop(0)
+        (edge,visited,visitedSet) = BFSarray.pop(0)
         #find other edges 
         next = edge.end
         if len(visited) == len(edgesList):
             #visited gives me an array of Eulerian walk of edges, can use that to print
             return visited
         for edge in next.edges:
-            if edge not in visited:
+            if edge not in visitedSet:
                 visitedCopy = visited
                 visitedCopy.append(edge)
-                BFSarray.append((edge,visitedCopy))
+                visitedSetCopy = visitedSet
+                visitedSetCopy.add(edge)
+                BFSarray.append((edge,visitedCopy, visitedSetCopy))
     return None
 
 parser = argparse.ArgumentParser()
@@ -80,15 +88,16 @@ if path is None:
 else:
     #print([str(edge) for edge in path])
     output = ''
+    outputArray = []
     for i,edge in enumerate(path):
         if i == 0:
-            output += edge.begin.data
+            outputArray.append(edge.begin.data)
         elif i == len(path) - 1:
-            output += edge.begin.data[-1] 
-            output += edge.end.data[-1]
+            outputArray.append(edge.begin.data[-1])
+            outputArray.append(edge.end.data[-1])
         else:
-            output += edge.begin.data[-1]
-    print(output)
+            outputArray.append(edge.begin.data[-1])
+    print(output.join(outputArray))
 
 
 
